@@ -11,6 +11,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
@@ -84,5 +85,13 @@ public class Events implements Listener {
 	@EventHandler
 	public void onFoodChange(FoodLevelChangeEvent event) {
 		event.setFoodLevel(20);
+	}
+
+	@EventHandler
+	public void onCommand(PlayerCommandPreprocessEvent event) {
+		if (!event.getPlayer().isOp()) {
+			event.setCancelled(true);
+			event.getPlayer().sendMessage("You cannot use that command on this server");
+		}
 	}
 }
