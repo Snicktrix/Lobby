@@ -3,3 +3,8 @@ main: net.Snicktrix.Lobby.Lobby
 author: Snicktrix
 version: 1.0
 description: Lobby Management by Snicktrix
+commands:
+  testconnect:
+    description: connect
+  testping:
+    description: ping server players

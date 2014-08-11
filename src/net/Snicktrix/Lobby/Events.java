@@ -1,6 +1,5 @@
 package net.Snicktrix.Lobby;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -47,14 +46,15 @@ public class Events implements Listener {
 		player.sendMessage(msg);
 		player.playSound(player.getLocation(), Sound.NOTE_PLING, 10, 1);
 
+		//Don't need this as its in indoor spawn
 		//Delay firework. Dumb Bukkit bug
-		Bukkit.getScheduler().scheduleSyncDelayedTask(lobby, new Runnable() {
-			@Override
-			public void run() {
-				//Set off a random firework
-				lobby.randomFirework(player.getLocation());
-			}
-		}, 20);
+//		Bukkit.getScheduler().scheduleSyncDelayedTask(lobby, new Runnable() {
+//			@Override
+//			public void run() {
+//				//Set off a random firework
+//				lobby.randomFirework(player.getLocation());
+//			}
+//		}, 20);
 
 	}
 
