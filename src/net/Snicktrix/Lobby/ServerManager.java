@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.io.*;
@@ -22,7 +24,7 @@ public class ServerManager implements PluginMessageListener {
 		this.servers = new ArrayList<Server>();
 	}
 
-	public void addServer(String name, String materialName) {
+	public void addServer(String name, String materialName, String itemName) {
 		Material material = Material.getMaterial(materialName);
 
 		if (material == null) {
@@ -31,6 +33,9 @@ public class ServerManager implements PluginMessageListener {
 		}
 
 		ItemStack icon = new ItemStack(material);
+		ItemMeta meta = icon.getItemMeta();
+		meta.setDisplayName(itemName);
+		icon.setItemMeta(meta);
 
 		Server server = new Server(name, icon);
 		this.servers.add(server);
@@ -84,7 +89,6 @@ public class ServerManager implements PluginMessageListener {
 	private void setServerPlayerCount(String name, int playerCount) {
 		Server server = getServer(name);
 		server.setPlayerCount(playerCount);
-		Bukkit.broadcastMessage(name + " has " + Integer.toString(playerCount) + " players(s).");
 	}
 
 	public void connectPlayerToServer(Player player, String serverName) {
@@ -98,6 +102,42 @@ public class ServerManager implements PluginMessageListener {
 			// Can never happen
 		}
 		player.sendPluginMessage(lobby, "BungeeCord", b.toByteArray());
+	}
+
+	public void setDefaultInventory(Player player) {
+		PlayerInventory inv = player.getInventory();
+
+		player.setHealth(20);
+		player.setFoodLevel(20);
+
+		inv.setArmorContents(null);
+
+		int i = 0;
+		for (Server server : servers) {
+			inv.setItem(i, server.getIcon());
+			i++;
+		}
+
+	}
+
+	public Server getServer(ItemStack itemStack) {
+		for (Server server : servers) {
+			if (server.getIcon().equals(itemStack)) {
+				return server;
+			}
+		}
+		return null;
+	}
+
+	public void startPlayerCountUpdater() {
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(lobby, new Runnable() {
+			@Override
+			public void run() {
+					for (Server server : servers) {
+						pingServerPlayers(server.getName());
+					}
+			}
+		}, 0, 20 * 5);
 	}
 
 }

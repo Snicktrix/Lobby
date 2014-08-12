@@ -10,8 +10,8 @@ import org.bukkit.plugin.java.JavaPlugin;
  * Created by Luke on 8/9/14.
  */
 public class Lobby extends JavaPlugin {
+	public ServerManager serverManager;
 	private Events events;
-	private ServerManager serverManager;
 
 	@Override
 	public void onEnable() {
@@ -24,6 +24,7 @@ public class Lobby extends JavaPlugin {
 		Bukkit.getPluginManager().registerEvents(this.events, this);
 
 		loadServersFromConfig();
+		serverManager.startPlayerCountUpdater();
 	}
 
 	private void loadConfig() {
@@ -48,8 +49,9 @@ public class Lobby extends JavaPlugin {
 			if (!s.equalsIgnoreCase("Spawn")) {
 				String name = getConfig().getString(s + ".name");
 				String materialName = getConfig().getString(s + ".material");
-				serverManager.addServer(name, materialName);
-				Bukkit.broadcastMessage("added server " + name + " with material " + materialName);
+				String itemName = colorCodeConverter(getConfig().getString(s + ".itemName"));
+				serverManager.addServer(name, materialName, itemName);
+				Bukkit.broadcastMessage("added server " + name + " with material " + materialName + " and itemname " + itemName);
 			}
 		}
 	}
@@ -72,5 +74,10 @@ public class Lobby extends JavaPlugin {
 				player.sendMessage(msg);
 			}
 		}
+	}
+
+	private String colorCodeConverter(String str) {
+		String newString = str.replace("&", "§");
+		return newString;
 	}
 }
