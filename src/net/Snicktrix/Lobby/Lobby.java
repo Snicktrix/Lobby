@@ -15,15 +15,15 @@ public class Lobby extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		//Setup config
-		saveDefaultConfig();
-
-		Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-
 		this.serverManager = new ServerManager(this);
+
+		Bukkit.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this.serverManager);
+		Bukkit.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 
 		this.events = new Events(this);
 		Bukkit.getPluginManager().registerEvents(this.events, this);
+
+		loadServersFromConfig();
 	}
 
 	private void loadConfig() {
@@ -31,10 +31,27 @@ public class Lobby extends JavaPlugin {
 		getConfig().options().copyDefaults(true);
 		saveDefaultConfig();
 
-		for (String name : getConfig().getStringList("Servers")) {
-//			serverManager.addServer(name);
+		for (String s : getConfig().getKeys(false)) {
+			if (!s.equalsIgnoreCase("Spawn")) {
+
+			}
 		}
 
+	}
+
+	private void loadServersFromConfig() {
+		//Set up the config
+		getConfig().options().copyDefaults(true);
+		saveDefaultConfig();
+
+		for (String s : getConfig().getKeys(false)) {
+			if (!s.equalsIgnoreCase("Spawn")) {
+				String name = getConfig().getString(s + ".name");
+				String materialName = getConfig().getString(s + ".material");
+				serverManager.addServer(name, materialName);
+				Bukkit.broadcastMessage("added server " + name + " with material " + materialName);
+			}
+		}
 	}
 
 	@Override

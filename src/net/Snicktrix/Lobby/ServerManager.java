@@ -1,6 +1,9 @@
 package net.Snicktrix.Lobby;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.io.*;
@@ -19,6 +22,45 @@ public class ServerManager implements PluginMessageListener {
 		this.servers = new ArrayList<Server>();
 	}
 
+	public void addServer(String name, String materialName) {
+		Material material = Material.getMaterial(materialName);
+
+		if (material == null) {
+			//Freak out
+			System.out.println("[LOBBY ERROR] MATERIAL NOT LOADED CORRECTLY");
+		}
+
+		ItemStack icon = new ItemStack(material);
+
+		Server server = new Server(name, icon);
+		this.servers.add(server);
+		this.pingServerPlayers(name);
+	}
+
+	private void pingServerPlayers(String name) {
+		try {
+			ByteArrayOutputStream b = new ByteArrayOutputStream();
+			DataOutputStream out = new DataOutputStream(b);
+
+			out.writeUTF("PlayerCount");
+			out.writeUTF(name);
+
+			Bukkit.getServer().sendPluginMessage(this.lobby, "BungeeCord", b.toByteArray());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	//Get server by name
+	private Server getServer(String name) {
+		for (Server server : this.servers) {
+			if (server.getName().equals(name)) {
+				return server;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public void onPluginMessageReceived(String channel, Player player, byte[] message) {
 		if (!channel.equals("BungeeCord")) return;
@@ -32,10 +74,17 @@ public class ServerManager implements PluginMessageListener {
 				int playerCount = in.readInt();
 
 				System.out.println("Server " + server + " has " + playerCount + " player(s).");
+				setServerPlayerCount(server, playerCount);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void setServerPlayerCount(String name, int playerCount) {
+		Server server = getServer(name);
+		server.setPlayerCount(playerCount);
+		Bukkit.broadcastMessage(name + " has " + Integer.toString(playerCount) + " players(s).");
 	}
 
 	public void connectPlayerToServer(Player player, String serverName) {

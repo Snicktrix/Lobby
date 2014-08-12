@@ -1,17 +1,20 @@
 package net.Snicktrix.Lobby;
 
+import org.bukkit.inventory.ItemStack;
+
 /**
  * Created by Luke on 8/11/14.
  */
 public class Server {
 	private String name;
-	private int players;
-	private int maxPlayers;
+	private int playerCount;
+	private ItemStack icon;
 
-	public Server(String name, int players, int maxPlayers) {
+	public Server(String name, ItemStack icon) {
 		this.name = name;
-		this.players = players;
-		this.maxPlayers = maxPlayers;
+		this.icon = icon;
+		//Default to 0
+		this.playerCount = 0;
 	}
 
 	public String getName() {
@@ -22,19 +25,20 @@ public class Server {
 		this.name = name;
 	}
 
-	public int getPlayers() {
-		return players;
+	public ItemStack getIcon() {
+		return icon;
 	}
 
-	public void setPlayers(int players) {
-		this.players = players;
+	public void setIcon(ItemStack icon) {
+		this.icon = icon;
 	}
 
-	public int getMaxPlayers() {
-		return maxPlayers;
+	public int getPlayerCount() {
+		return playerCount;
 	}
 
-	public void setMaxPlayers(int maxPlayers) {
-		this.maxPlayers = maxPlayers;
+	public void setPlayerCount(int players) {
+		this.playerCount = players;
 	}
+
 }

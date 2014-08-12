@@ -1,8 +1,3 @@
-WorldName: lobby
-
-SpawnX: 0
-SpawnY: 70
-SpawnZ: 0
-
-Yaw: 0
-Pitch: 0
+KD1:
+    name: KD-1
+    material: STICK
